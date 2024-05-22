@@ -20,8 +20,8 @@ public class User implements UserDetails{
     private Long id;
 
     @Column(name = "name")
-    @NotBlank(message = "Name cannot be blank.")
-    @Size(min = 3, message = "Name must be at least 3 characters.")
+//    @NotBlank(message = "Name cannot be blank.")
+//    @Size(min = 3, message = "Name must be at least 3 characters.")
     @Size(max = 255, message = "Name must not be more than 255 characters.")
     private String name;
 
@@ -69,7 +69,5 @@ public class User implements UserDetails{
         return true;
     }
 
-    private String firstName;
-    private String lastName;
     private String billingAddress;
 }

@@ -1,4 +1,4 @@
-package com.seoulful.snack.configconfig;
+package com.seoulful.snack.config;
 
 import com.seoulful.snack.config.JWTAuthFilter;
 import com.seoulful.snack.service.UsersDetailsService;

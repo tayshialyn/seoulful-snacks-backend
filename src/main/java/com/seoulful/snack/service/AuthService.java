@@ -2,6 +2,7 @@ package com.seoulful.snack.service;
 
 import com.seoulful.snack.dto.RequestResponse;
 import com.seoulful.snack.exception.PasswordBlankException;
+import com.seoulful.snack.model.EnumRole;
 import com.seoulful.snack.model.User;
 import com.seoulful.snack.repository.UserRepository;
 import com.seoulful.snack.util.JWTUtils;
@@ -36,7 +37,7 @@ public class AuthService {
 
         User user = new User();
 
-        user.setName(registrationRequest.getName());
+//        user.setName(registrationRequest.getName());
 
         user.setEmail(registrationRequest.getEmail());
 
@@ -44,7 +45,8 @@ public class AuthService {
             throw new PasswordBlankException();
 
         user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-        user.setRole(registrationRequest.getRole());
+        user.setRole(EnumRole.USER); // Only allow signup as user
+//        user.setRole(registrationRequest.getRole()); // Uncomment to allow frontend to pass signup user type
         User userResult = userRepository.save(user);
 
         if (userResult != null && userResult.getId() > 0) {
