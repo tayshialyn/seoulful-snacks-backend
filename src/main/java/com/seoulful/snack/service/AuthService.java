@@ -2,6 +2,7 @@ package com.seoulful.snack.service;
 
 import com.seoulful.snack.dto.RequestResponse;
 import com.seoulful.snack.exception.PasswordBlankException;
+import com.seoulful.snack.exception.WeakPasswordException;
 import com.seoulful.snack.model.EnumRole;
 import com.seoulful.snack.model.User;
 import com.seoulful.snack.repository.UserRepository;
@@ -43,6 +44,8 @@ public class AuthService {
 
         if (registrationRequest.getPassword().isBlank())
             throw new PasswordBlankException();
+        else if(!registrationRequest.getPassword().matches("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"))
+            throw new WeakPasswordException();
 
         user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         user.setRole(EnumRole.USER); // Only allow signup as user
@@ -53,6 +56,15 @@ public class AuthService {
             requestResponse.setUser(userResult);
             requestResponse.setMessage("User saved successfully.");
         }
+
+        var jwt = jwtUtils.generateToken(user);
+
+        var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+
+        requestResponse.setToken(jwt);
+        requestResponse.setRefreshToken(refreshToken);
+        requestResponse.setExpirationTime("24Hr");
+        requestResponse.setMessage("Signed in successfully.");
 
         return requestResponse;
     }
