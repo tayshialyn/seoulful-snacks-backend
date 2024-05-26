@@ -35,11 +35,12 @@ public class SecurityConfig {
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(request -> request.requestMatchers("/auth/api/**", "/public/api/**").permitAll()
-                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                        .requestMatchers("/user/**").hasAnyAuthority("USER")
-                        .requestMatchers("/restricted/**").hasAnyAuthority("USER", "ADMIN")
-                        .anyRequest().authenticated())
+//                .authorizeHttpRequests(request -> request.requestMatchers("/auth/api/**", "/public/api/**").permitAll()
+//                        .requestMatchers("/profile/api/**").hasAnyAuthority("USER")
+//                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+//                        .requestMatchers("/user/**").hasAnyAuthority("USER")
+//                        .requestMatchers("/restricted/**").hasAnyAuthority("USER", "ADMIN")
+//                        .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthFIlter, UsernamePasswordAuthenticationFilter.class
