@@ -1,0 +1,56 @@
+package com.seoulful.snack.service;
+
+import com.seoulful.snack.dto.RequestResponse;
+import com.seoulful.snack.exception.PasswordBlankException;
+import com.seoulful.snack.model.User;
+import com.seoulful.snack.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
+
+
+@Service
+public class ProfileService {
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User getProfile(String email) {
+        User user;
+        try {
+            user = userRepository.findByEmail(email).orElseThrow();
+            return user;
+        } catch (NoSuchElementException noSuchElementException) {
+            return null;
+        }
+    }
+
+    // signs up a user and stores the user to the User table
+    public RequestResponse updateProfile(RequestResponse updateRequest) {
+
+        RequestResponse requestResponse = new RequestResponse();
+
+        var user = userRepository.findByEmail(updateRequest.getEmail()).orElseThrow();
+
+//        user.setName(registrationRequest.getName());
+
+        user.setEmail(updateRequest.getEmail());
+
+        if (updateRequest.getPassword().isBlank())
+            throw new PasswordBlankException();
+
+        user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+        User userResult = userRepository.save(user);
+
+        if (userResult != null && userResult.getId() > 0) {
+            requestResponse.setUser(userResult);
+            requestResponse.setMessage("User saved successfully.");
+        }
+
+        return requestResponse;
+    }
+}
