@@ -16,6 +16,9 @@ public class Subscription {
     @ManyToOne
     Product product;
 
+    @ManyToOne
+    User user;
+
     int quantity;
     String mailingAddress;
     Date subscribedOn;

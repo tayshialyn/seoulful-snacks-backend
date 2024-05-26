@@ -32,12 +32,16 @@ public class User implements UserDetails{
 
     @Column(name="password")
     @NotBlank(message = "Password cannot be blank.")
+    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters")
     private String password;
 
     @Column(name="role", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Role cannot be blank.")
     private EnumRole role;
+
+    @OneToMany
+    List<Subscription> subscription;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
