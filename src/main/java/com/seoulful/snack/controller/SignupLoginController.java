@@ -1,6 +1,7 @@
 package com.seoulful.snack.controller;
 
 import com.seoulful.snack.dto.RequestResponse;
+import com.seoulful.snack.model.EnumRole;
 import com.seoulful.snack.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +17,14 @@ public class SignupLoginController {
     @Autowired
     private AuthService authService;
 
-    //register for an account
-//    @PostMapping("/signup")
-//    public ResponseEntity<RequestResponse> signUp(@Valid @RequestBody RequestResponse signUpRequest){
-//        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(signUpRequest));
-//    }
-//
-//    //signin to an account
-//    @PostMapping("/login")
-//    public ResponseEntity<RequestResponse> signIn(@RequestBody RequestResponse signInRequest){
-//        return ResponseEntity.status(HttpStatus.OK).body(authService.signIn(signInRequest));
-//    }
-
     @PostMapping("/signup")
     public ResponseEntity<RequestResponse> signUp(@Valid @RequestBody RequestResponse signUpRequest){
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(signUpRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(signUpRequest, EnumRole.USER));
+    }
+
+    @PostMapping("/signup-admin")
+    public ResponseEntity<RequestResponse> signUpAdmin(@Valid @RequestBody RequestResponse signUpRequest){
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(signUpRequest, EnumRole.ADMIN));
     }
 
     //signin to an account

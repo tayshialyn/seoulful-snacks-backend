@@ -32,7 +32,7 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     // signs up a user and stores the user to the User table
-    public RequestResponse signUp(RequestResponse registrationRequest) {
+    public RequestResponse signUp(RequestResponse registrationRequest, EnumRole enumRole) {
 
         RequestResponse requestResponse = new RequestResponse();
 
@@ -48,8 +48,8 @@ public class AuthService {
             throw new WeakPasswordException();
 
         user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-        user.setRole(EnumRole.USER); // Only allow signup as user
-//        user.setRole(registrationRequest.getRole()); // Uncomment to allow frontend to pass signup user type
+        user.setRole(enumRole); // Only allow signup as user
+        // user.setRole(registrationRequest.getRole()); // Uncomment to allow frontend to pass signup user type
         User userResult = userRepository.save(user);
 
         if (userResult != null && userResult.getId() > 0) {

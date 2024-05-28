@@ -36,14 +36,15 @@ public class ProfileService {
 
         var user = userRepository.findByEmail(updateRequest.getEmail()).orElseThrow();
 
-//        user.setName(registrationRequest.getName());
-
+        user.setName(updateRequest.getName());
         user.setEmail(updateRequest.getEmail());
+        user.setBillingAddress(updateRequest.getBillingAddress());
 
-        if (updateRequest.getPassword().isBlank())
-            throw new PasswordBlankException();
+        // updateProfile does not update password
+//        if (updateRequest.getPassword().isBlank())
+//            throw new PasswordBlankException();
+//        user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
 
-        user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
         User userResult = userRepository.save(user);
 
         if (userResult != null && userResult.getId() > 0) {

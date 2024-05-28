@@ -22,4 +22,5 @@ public class RequestResponse {
     private EnumRole role;
     private String password;
     private User user;
+    private String billingAddress;
 }
