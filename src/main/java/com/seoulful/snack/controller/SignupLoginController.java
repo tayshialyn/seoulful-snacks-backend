@@ -17,6 +17,17 @@ public class SignupLoginController {
     private AuthService authService;
 
     //register for an account
+//    @PostMapping("/signup")
+//    public ResponseEntity<RequestResponse> signUp(@Valid @RequestBody RequestResponse signUpRequest){
+//        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(signUpRequest));
+//    }
+//
+//    //signin to an account
+//    @PostMapping("/login")
+//    public ResponseEntity<RequestResponse> signIn(@RequestBody RequestResponse signInRequest){
+//        return ResponseEntity.status(HttpStatus.OK).body(authService.signIn(signInRequest));
+//    }
+
     @PostMapping("/signup")
     public ResponseEntity<RequestResponse> signUp(@Valid @RequestBody RequestResponse signUpRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(signUpRequest));
