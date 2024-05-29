@@ -33,7 +33,4 @@ build/
 .vscode/
 
 ### Environment Variables ###
-.env
-
-### Application Properties ###
-.properties
+env.properties
