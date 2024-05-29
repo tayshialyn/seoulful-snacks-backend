@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Data // getters and setters as well toString, etc
+@Data  // getters and setters as well as toString, etc.
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -42,3 +42,5 @@ public class Product {
         this.imagePath = imagePath;
     }
 }
+
+

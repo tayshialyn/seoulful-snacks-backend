@@ -1,77 +1,45 @@
 package com.seoulful.snack.controller;
 
 import com.seoulful.snack.exception.ResourceNotFoundException;
-import com.seoulful.snack.model.Product;
-import com.seoulful.snack.model.Subscription;
-import com.seoulful.snack.model.User;
-import com.seoulful.snack.repository.ProductRepository;
-import com.seoulful.snack.repository.SubscriptionRepository;
-import com.seoulful.snack.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
-@RequestMapping("/user/api/subscription")
+@RequestMapping("/subscriptions")
 public class SubscriptionController {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getSubscriptionsByUserId(@PathVariable Long id) {
-        try {
-            Optional<User> users = userRepository.findById(id);
-            if (users.isEmpty()) {
+    public ResponseEntity<Object> getSubscriptionsByCustomerId(@PathVariable Long id) {
+        try{
+            Optional<Customer> customer = customerService.getCustomerByID(id);
+            if (customer.isEmpty()) {
                 throw new ResourceNotFoundException("Customer Not Found");
             }
 
-            List<Subscription> subscriptions = subscriptionRepository.findByUserSubscription(users.get());
+            List<Subscription> subscriptions = subscriptionService.getSubscriptionsByCustomer(customer.get());
             return new ResponseEntity(subscriptions, HttpStatus.OK);
-        } catch (Exception e) {
+        }
+        catch (Exception e){
             throw new RuntimeException(e);
         }
     }
 
     @PostMapping("")
     public ResponseEntity<Object> addNewSubscription(
-            @RequestParam("user_id") Long cid,
+            @RequestParam("customer_id") Long cid,
             @RequestParam("product_id") Long pid,
-            @RequestParam("quantity") int qty) throws Exception {
+            @RequestParam("quantity") int qty,
+            int quantity) throws Exception {
+        try{
+            Optional<Subscription> createdSubscription = subscriptionService.createSubscription(cid, pid, qty);
+            if(createdSubscription.isEmpty())
+                throw new Exception("Unable to create subscription");
 
-        try {
-            User subscribedUser = userRepository.findById(cid).orElseThrow(() -> new ResourceNotFoundException("Customer Not Found"));
-
-            Subscription subscription = new Subscription();
-            subscription.setUser(subscribedUser);
-
-            if (pid != null) {
-                Product product = productRepository.findById(pid).orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
-                subscription.setProduct(product);
-            }
-
-            subscription.setQuantity(qty);
-            subscription.setMailing_address("Seoul");
-            subscription.setSubscribed_on(java.time.LocalDateTime.now());
-            subscription.setExpired_on(subscription.getSubscribed_on().plusDays(30));
-
-            subscriptionRepository.save(subscription);
-
-            return new ResponseEntity<>(subscription, HttpStatus.CREATED);
-        } catch (Exception e) {
+            return new ResponseEntity<>(createdSubscription, HttpStatus.CREATED);
+        }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
 
     }
 }
