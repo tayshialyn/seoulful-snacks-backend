@@ -62,6 +62,7 @@ public class AuthService {
         var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
 
         requestResponse.setToken(jwt);
+        requestResponse.setRole(user.getRole());
         requestResponse.setRefreshToken(refreshToken);
         requestResponse.setExpirationTime("24Hr");
         requestResponse.setMessage("Signed in successfully.");
@@ -83,6 +84,7 @@ public class AuthService {
         var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
 
         requestResponse.setToken(jwt);
+        requestResponse.setRole(user.getRole());
         requestResponse.setRefreshToken(refreshToken);
         requestResponse.setExpirationTime("24Hr");
         requestResponse.setMessage("Signed in successfully.");
