@@ -24,7 +24,7 @@ public class Product {
     @NotBlank(message = "Name cannot be blank.")
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition="LONGTEXT")
     @NotBlank(message = "Description cannot be blank.")
     private String description;
 
