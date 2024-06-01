@@ -36,7 +36,7 @@ public class SubscriptionController {
                 throw new ResourceNotFoundException("Customer Not Found");
             }
 
-            List<Subscription> subscriptions = subscriptionRepository.findByUserSubscription(users.get());
+            List<Subscription> subscriptions = subscriptionRepository.findByUser(users.get());
             return new ResponseEntity(subscriptions, HttpStatus.OK);
         } catch (Exception e) {
             throw new RuntimeException(e);
