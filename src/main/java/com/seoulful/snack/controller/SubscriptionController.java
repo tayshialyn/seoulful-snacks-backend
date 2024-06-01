@@ -46,6 +46,7 @@ public class SubscriptionController {
     @PostMapping("")
     public ResponseEntity<Object> addNewSubscription(
             @RequestParam("user_id") Long cid,
+            @RequestParam("mailing_address") String mailingAddress,
             @RequestParam("product_id") Long pid,
             @RequestParam("quantity") int qty) throws Exception {
 
@@ -61,7 +62,7 @@ public class SubscriptionController {
             }
 
             subscription.setQuantity(qty);
-            subscription.setMailing_address("Seoul");
+            subscription.setMailing_address(mailingAddress);
             subscription.setSubscribed_on(java.time.LocalDateTime.now());
             subscription.setExpired_on(subscription.getSubscribed_on().plusDays(30));
 
