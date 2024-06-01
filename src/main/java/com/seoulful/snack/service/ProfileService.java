@@ -1,13 +1,14 @@
 package com.seoulful.snack.service;
 
 import com.seoulful.snack.dto.RequestResponse;
-import com.seoulful.snack.exception.PasswordBlankException;
 import com.seoulful.snack.model.User;
 import com.seoulful.snack.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 
@@ -53,5 +54,17 @@ public class ProfileService {
         }
 
         return requestResponse;
+    }
+
+
+    public List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
+        try {
+            users = userRepository.findAll();
+//            users = userRepository.findAllByRole(EnumRole.USER);
+            return users;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
