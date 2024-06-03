@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin("*")   // Allow requests to load resources on other servers. https://spring.io/guides/gs/rest-service-cors
 @RequestMapping("/user/api/subscription")
 public class SubscriptionController {
 
@@ -28,10 +29,10 @@ public class SubscriptionController {
     @Autowired
     private ProductRepository productRepository;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getSubscriptionsByUserId(@PathVariable Long id) {
+    @GetMapping("/{email}")
+    public ResponseEntity<Object> getSubscriptionsByUserId(@PathVariable String email) {
         try {
-            Optional<User> users = userRepository.findById(id);
+            Optional<User> users = userRepository.findByEmail(email);
             if (users.isEmpty()) {
                 throw new ResourceNotFoundException("Customer Not Found");
             }
