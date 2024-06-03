@@ -20,6 +20,7 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin/api/product")
+@CrossOrigin("*")
 public class ProductController {
     @Autowired
     ProductRepository productRepository;
@@ -84,7 +85,7 @@ public class ProductController {
             if(savedProduct.getId() <= 0)
                 throw new ResourceNotFoundException("Unable to create product.");
 
-            return new ResponseEntity<>("Product added successfully.", HttpStatus.CREATED);
+            return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
 
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
