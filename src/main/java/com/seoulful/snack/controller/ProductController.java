@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -43,7 +45,7 @@ public class ProductController {
         return true;
     }
 
-    // Add a new product
+    // TODO - Add a new product by Admin
     @PostMapping("/add")  // Specific path for adding products
     public ResponseEntity<Object> addNewProduct(@RequestParam("data") String data, @Nullable @RequestParam("file") MultipartFile file) throws Exception {
 
@@ -92,51 +94,78 @@ public class ProductController {
         }
     }
 
-    // TODO - update product (implemented)
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Object> updateProduct(@PathVariable("id") Long id, @RequestParam("data") String data, @Nullable @RequestParam("file") MultipartFile file) throws Exception {
-//
-//        // Convert parameterised data to JSON for the product
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        Product product = objectMapper.readValue(data, Product.class);
-//
-//        // If the file is NOT empty
-//        if(file != null){
-//            // Validate the file type
-//            if (!file.getContentType().equals("image/jpeg") && !file.getContentType().equals("image/jpg") ) {
-//                return new ResponseEntity<>("Image format is not JPEG or JPG.", HttpStatus.BAD_REQUEST);
-//            }
-//        }
-//
-//        try {
-//            Product result = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException());
-//
-//            result.setId(id);
-//            result.setName(product.getName());
-//            result.setDescription(product.getDescription());
-//            result.setPrice(product.getPrice());
-//            result.setImagePath(result.getImagePath());
-//            productRepository.save(result);
-//
-//            // Save the product image
-//            if (file != null && !file.isEmpty()) {
-//                String fileName = file.getOriginalFilename();
-//                Path targetLocation = this.fileStorageLocation.resolve(fileName);
-//                Files.copy(file.getInputStream(), targetLocation);
-//                result.setImagePath("/product_photos/" + fileName);
-//            }
-//
-//            productRepository.save(result);
-//
-//            return new ResponseEntity<>(result, HttpStatus.OK);
-//
-//        } catch (NoSuchElementException ex) {
-//            throw new ResourceNotFoundException("Resource not found. Unable to update product.");
-//        }
-//    }
+    // TODO - update product by Admin (implemented)
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Object> updateProduct(@PathVariable("id") Long id, @RequestParam("data") String data, @Nullable @RequestParam("file") MultipartFile file) throws Exception {
 
-    // TODO - delete product (implemented)
-    @DeleteMapping("/{id}")
+        // Ask for an image to be uploaded
+        if (file == null) {
+            return new ResponseEntity<>("Please upload an image.", HttpStatus.BAD_REQUEST);
+        }
+
+        try{
+
+            // Convert parameterised data to JSON for the product
+            ObjectMapper objectMapper = new ObjectMapper();
+            Product product = objectMapper.readValue(data, Product.class);
+
+            Product result = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found. Unable to update product."));
+
+            result.setId(id);
+            result.setName(product.getName());
+            result.setDescription(product.getDescription());
+            result.setPrice(product.getPrice());
+            result.setImagePath(result.getImagePath());
+            productRepository.save(result);
+
+            // If the file is NOT empty
+            if (file != null && !file.isEmpty()) {
+
+                // Generate a random file name
+                String randomFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+
+                // Save the product image
+                Path targetLocation = this.fileStorageLocation.resolve(randomFileName);
+                Files.copy(file.getInputStream(), targetLocation);
+                result.setImagePath("/product_photos/" + randomFileName);
+            }
+
+            productRepository.save(result);
+
+            return new ResponseEntity<>(result, HttpStatus.OK);
+
+        }catch(ResourceNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    // TODO - get all products by Admin (implemented)
+    @GetMapping("")
+    public ResponseEntity<Object> getAllProducts(@RequestParam(required = false) String name){
+
+        try{
+            List<Product> result = new ArrayList<>();
+
+            if(name == null){
+                result.addAll(productRepository.findAll());
+            }else{
+                result.addAll(productRepository.findByNameContaining(name));
+            }
+
+            if(result.isEmpty()){
+                throw new ResourceNotFoundException("No products found");
+            }
+
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // TODO - delete product by Admin (implemented)
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Object> deleteProduct(@PathVariable("id") Long id) {
 
         Product result = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException());

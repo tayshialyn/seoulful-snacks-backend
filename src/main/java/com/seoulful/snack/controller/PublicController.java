@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/public/api/")
@@ -46,4 +47,17 @@ public class PublicController {
     }
 
     // TODO get product by id
+    // Get all products by public users
+    @GetMapping("/product/{id}")
+    public ResponseEntity<Object> getProductById(@PathVariable("id") Long id){
+
+        try{
+            Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No product found"));
+            return new ResponseEntity<>(product, HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
