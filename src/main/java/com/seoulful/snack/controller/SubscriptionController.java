@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -44,26 +45,23 @@ public class SubscriptionController {
         }
     }
 
-    @PostMapping("")
+    @PostMapping("/add/{id}")
     public ResponseEntity<Object> addNewSubscription(
-            @RequestParam("user_id") Long cid,
-            @RequestParam("mailing_address") String mailingAddress,
-            @RequestParam("product_id") Long pid,
-            @RequestParam("quantity") int qty) throws Exception {
+            @PathVariable("id") Long id,
+            @RequestBody Map<String, String> subscriptionRequest)
+            throws Exception {
 
         try {
-            User subscribedUser = userRepository.findById(cid).orElseThrow(() -> new ResourceNotFoundException("Customer Not Found"));
+            User subscribedUser = userRepository.findByEmail(subscriptionRequest.get("email")).orElseThrow(() -> new ResourceNotFoundException("Customer Not Found"));
 
             Subscription subscription = new Subscription();
             subscription.setUser(subscribedUser);
 
-            if (pid != null) {
-                Product product = productRepository.findById(pid).orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
-                subscription.setProduct(product);
-            }
+            Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
+            subscription.setProduct(product);
 
-            subscription.setQuantity(qty);
-            subscription.setMailing_address(mailingAddress);
+            subscription.setQuantity(Integer.parseInt(subscriptionRequest.get("qty")));
+            subscription.setMailing_address(subscriptionRequest.get("mailing_address"));
             subscription.setSubscribed_on(java.time.LocalDateTime.now());
             subscription.setExpired_on(subscription.getSubscribed_on().plusDays(30));
 
